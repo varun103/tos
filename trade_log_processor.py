@@ -8,14 +8,14 @@ FIND = ''
 
 class Trade:
 
-    def __init__(self, stock:str, total:int, comm:int):
+    def __init__(self, stock: str, total, comm):
         self.stock = stock
         self.total = total
         self.comm = comm
         self.net = total - comm
 
     def __str__(self):
-        text = '{stock}, {total}, {commission}, {net}'
+        text = '{stock}, {total}, {commission:.2f}, {net:.2f}'
         return text.format(stock=self.stock, total=self.total, commission=self.comm, net=self.net)
 
     def __repr__(self):
@@ -74,15 +74,15 @@ class TradeProcessor:
 
 class TradesProcessor:
 
-
     def __init__(self, trades):
         self.trades = trades
-        self.sorted_trades = sorted(trades, key=lambda trade:trade.net, reverse=True)
+        self.sorted_trades = sorted(trades, key=lambda trade: trade.net, reverse=True)
         self.total = 0
         self.comm = 0
         self.net = 0
         self.stock = {}
         self._process()
+        self.count = len(trades)
 
     def _process(self):
 
@@ -95,14 +95,14 @@ class TradesProcessor:
                 self.stock[t.stock] = 0
             self.stock[t.stock] = self.stock[t.stock] + t.net
 
-
     def __str__(self):
-        x = "\nTotal = {trades}" \
-            "\nCommission = {comm}" \
-            "\nNet with commission = {net}" \
+        x = "\nTotal = {trades:.2f}" \
+            "\nCommission = {comm:.2f}" \
+            "\nNet with commission = {net:.2f}" \
             "\nCommission %age = {c_p:.2f}\n"
 
-        return x.format(trades= self.total, comm = self.comm, net = self.net, c_p = (self.comm / self.total) * 100)
+        return x.format(trades=self.total, comm=self.comm, net=self.net, c_p=(self.comm / self.total) * 100)
+
 
 if __name__ == '__main__':
 
@@ -123,15 +123,12 @@ if __name__ == '__main__':
 
             trades.append(trade)
 
-
     t = TradesProcessor(trades)
 
-    sorted_trades = sorted(trades, key=lambda trade:trade.net, reverse=True)
+    sorted_trades = sorted(trades, key=lambda trade: trade.net, reverse=True)
     for i in sorted_trades:
         print(i)
 
     print(t)
 
     pprint.pprint(t.stock)
-
-
