@@ -2,8 +2,10 @@ import os
 from functools import reduce
 import pprint
 
+FILE_PREFIX = 'simulated'
 DIR = '/Users/varunajmera/Documents/mar'
 FIND = ''
+COMM = 0.65
 
 
 class Trade:
@@ -23,7 +25,7 @@ class Trade:
         return text.format(stock=self.stock, total=self.total, commission=self.comm, net=self.net)
 
 
-class TradeProcessor:
+class SimulatedTradeProcessor:
 
     def __init__(self):
         self.options_legs = {
@@ -59,7 +61,7 @@ class TradeProcessor:
             else:
                 trade_count = 1
 
-            commission = trade_count * .65 * lot_size
+            commission = trade_count * COMM * lot_size
 
             price = tokens[-3].split('@')
             total = total + (float(price[1]) * multiplier * lot_size)
@@ -93,25 +95,26 @@ class TradesProcessor:
         for t in trades:
             if t.stock not in self.stock.keys():
                 self.stock[t.stock] = 0
-            self.stock[t.stock] = self.stock[t.stock] + t.net
+            self.stock[t.stock] = self.stock[t.stock] + int(t.net)
 
     def __str__(self):
-        x = "\nTotal = {trades:.2f}" \
+        x = "\nTrade count = {count}" \
+            "\nOverall PnL = {trades:.2f}" \
             "\nCommission = {comm:.2f}" \
-            "\nNet with commission = {net:.2f}" \
+            "\nNet PnL = {net:.2f}" \
             "\nCommission %age = {c_p:.2f}\n"
 
-        return x.format(trades=self.total, comm=self.comm, net=self.net, c_p=(self.comm / self.total) * 100)
+        return x.format(count = len(self.trades),trades=self.total, comm=self.comm, net=self.net, c_p=(self.comm / self.total) * 100)
 
 
 if __name__ == '__main__':
 
     files = os.listdir(DIR)
-    t = TradeProcessor()
+    t = SimulatedTradeProcessor()
 
     trades = []
     for filename in files:
-        if filename.startswith('simulated'):
+        if filename.startswith(FILE_PREFIX):
             _stock = filename.split('_')[2]
             stock = _stock.split('-')[0]
             dir_filename = DIR + '/' + filename
